@@ -39,6 +39,8 @@ Exit code `0` = success; non-zero = failure. Prefer `--json` in automation.
 5. Request **minimum** `permissions` (default deny)
 6. Do not put secrets in the package
 7. Do not change `crates/kcell-core` for a single Cell need
+8. Prefer a **child repo** for product Cells; depend on KCell contracts
+9. Obey [`nfr.md`](nfr.md): compact, fast, simple, extensible kernel
 
 ## Anti-patterns
 
@@ -46,6 +48,7 @@ Exit code `0` = success; non-zero = failure. Prefer `--json` in automation.
 - Granting `*` network/process in manifests “for convenience”
 - Mutating another Cell’s package at runtime
 - Putting AutoConfig apply logic inside a Cell (Host applies proposals)
+- Growing core to ship one product feature instead of a child repo
 
 ## Golden path
 
