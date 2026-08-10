@@ -8,7 +8,14 @@ Composable AI cells. Build specialized agents from a **Stem Cell**, compose them
 - **Stem Cell** — generic base that absorbs config, libraries, and code to become any specialized Cell
 - **AI-man** — a folder of Cells composed together (like an organism made of many cells)
 
-Example: drop an Ollama brain Cell, a web chatbot Cell, and an auto-config Cell into one AI-man. Activate the host and you get a local chat UI backed by Ollama. Later, drop in a Cursor CLI brain Cell — the web UI can pick up Composer as another reply path without rewriting the other Cells.
+## Quick start
+
+```bash
+cargo build --release
+cargo run -- validate cells/echo-cell/cell.yaml --json
+cargo run -- run examples/echo-aiman/ai-man.yaml --root . --json
+cargo run -- new my-cell
+```
 
 ## Design principles
 
@@ -21,20 +28,21 @@ Example: drop an Ollama brain Cell, a web chatbot Cell, and an auto-config Cell 
 ## Repository layout
 
 ```text
-core/           # Host runtime (mechanisms only)
-schemas/        # cell.yaml, ai-man.yaml, binding contracts
-adapters/       # Protocol / transport adapters (out of core)
-cells/          # Reference / specialized Cells
-examples/       # Minimal AI-man compositions
-docs/           # Specs and agent authoring guides
-benches/        # Performance budgets and regression gates
-AGENTS.md       # Instructions for AI coding agents
+crates/kcell-core/   # Host runtime (mechanisms only)
+crates/kcell-cli/    # kcell CLI (new, validate, inspect, run)
+schemas/             # cell.yaml, ai-man.yaml, binding contracts
+adapters/            # Protocol / transport adapters (out of core)
+cells/               # Reference / specialized Cells
+examples/            # Minimal AI-man compositions
+docs/                # Specs and agent authoring guides
+benches/             # Performance budgets
+AGENTS.md            # Instructions for AI coding agents
 ```
 
 ## Status
 
-Early scaffolding. Spec and core implementation are in progress. See `docs/` and `AGENTS.md` before contributing Cells or touching the core.
+Core MVP in progress: manifests, lifecycle, local registry, binding proposals, policy gate, CLI.
 
 ## License
 
-TBD
+MIT OR Apache-2.0

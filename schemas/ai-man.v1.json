@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kcell.dev/schemas/ai-man.v1.json",
+  "title": "KCell ai-man.yaml",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "const": "kcell.dev/v1" },
+    "kind": { "const": "AIMan" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,62}$"
+        },
+        "description": { "type": "string", "maxLength": 512 }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cells"],
+      "properties": {
+        "cells": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "path"],
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "path": { "type": "string", "minLength": 1 },
+              "optional": { "type": "boolean", "default": false },
+              "dependsOn": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 },
+                "default": []
+              }
+            }
+          }
+        },
+        "bindings": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/binding" },
+          "default": []
+        },
+        "policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "defaultAllow": { "type": "boolean", "default": false },
+            "failureStrategy": {
+              "type": "string",
+              "enum": ["fail-fast", "continue-optional"],
+              "default": "continue-optional"
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["consumer", "provider", "capability"],
+      "properties": {
+        "consumer": { "type": "string", "minLength": 1 },
+        "provider": { "type": "string", "minLength": 1 },
+        "capability": { "type": "string", "minLength": 1 },
+        "required": { "type": "boolean", "default": true }
+      }
+    }
+  }
+}

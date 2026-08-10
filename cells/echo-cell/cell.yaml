@@ -1,0 +1,28 @@
+apiVersion: kcell.dev/v1
+kind: Cell
+metadata:
+  name: echo-cell
+  version: 0.1.0
+  description: Golden-path passive echo capability
+spec:
+  runtime:
+    kind: inprocess
+    entrypoint: echo
+  provides:
+    - name: echo
+      version: "1"
+      contract: kcell.echo.v1
+  requires: []
+  communication:
+    active: false
+    passive: true
+  ports:
+    - name: echo
+      direction: in
+      message: kcell.echo.request.v1
+  permissions: {}
+  resources:
+    memoryMb: 32
+    timeoutMs: 1000
+    concurrency: 8
+  restartPolicy: on-failure

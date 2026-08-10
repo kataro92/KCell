@@ -1,0 +1,21 @@
+apiVersion: kcell.dev/v1
+kind: AIMan
+metadata:
+  name: echo-demo
+  description: Minimal AI-man wiring caller -> echo
+spec:
+  cells:
+    - name: echo-cell
+      path: cells/echo-cell
+    - name: caller-cell
+      path: cells/caller-cell
+      dependsOn:
+        - echo-cell
+  bindings:
+    - consumer: caller-cell
+      provider: echo-cell
+      capability: echo
+      required: true
+  policy:
+    defaultAllow: false
+    failureStrategy: continue-optional

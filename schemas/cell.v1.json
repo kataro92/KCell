@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kcell.dev/schemas/cell.v1.json",
+  "title": "KCell cell.yaml",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "const": "kcell.dev/v1" },
+    "kind": { "const": "Cell" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,62}$",
+          "description": "Stable Cell identity (not instance id)"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+([-.][A-Za-z0-9.]+)?$",
+          "description": "Semantic version of this Cell package"
+        },
+        "description": { "type": "string", "maxLength": 512 }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runtime", "provides", "requires", "communication", "permissions"],
+      "properties": {
+        "runtime": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind"],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": ["wasi", "subprocess", "inprocess"]
+            },
+            "entrypoint": { "type": "string", "minLength": 1 },
+            "artifact": { "type": "string", "minLength": 1 }
+          }
+        },
+        "provides": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/capability" }
+        },
+        "requires": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/requirement" }
+        },
+        "communication": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["active", "passive"],
+          "properties": {
+            "active": { "type": "boolean" },
+            "passive": { "type": "boolean" }
+          }
+        },
+        "ports": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/port" },
+          "default": []
+        },
+        "resources": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "memoryMb": { "type": "integer", "minimum": 1, "maximum": 65536 },
+            "cpuMillis": { "type": "integer", "minimum": 1, "maximum": 256000 },
+            "timeoutMs": { "type": "integer", "minimum": 1 },
+            "concurrency": { "type": "integer", "minimum": 1, "maximum": 1024 }
+          }
+        },
+        "permissions": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "network": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "default": []
+            },
+            "filesystem": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["path", "mode"],
+                "properties": {
+                  "path": { "type": "string", "minLength": 1 },
+                  "mode": { "type": "string", "enum": ["ro", "rw"] }
+                }
+              },
+              "default": []
+            },
+            "process": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "default": []
+            },
+            "secrets": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "default": []
+            },
+            "peers": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "default": []
+            }
+          }
+        },
+        "health": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "readinessTimeoutMs": { "type": "integer", "minimum": 1, "default": 5000 },
+            "livenessIntervalMs": { "type": "integer", "minimum": 100, "default": 5000 }
+          }
+        },
+        "restartPolicy": {
+          "type": "string",
+          "enum": ["never", "on-failure", "always"],
+          "default": "on-failure"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "contract": { "type": "string", "minLength": 1 }
+      }
+    },
+    "requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "optional": { "type": "boolean", "default": false },
+        "contract": { "type": "string", "minLength": 1 }
+      }
+    },
+    "port": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "direction", "message"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "direction": { "type": "string", "enum": ["in", "out", "inout"] },
+        "message": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

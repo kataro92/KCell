@@ -1,0 +1,18 @@
+[package]
+name = "kcell"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "KCell CLI — validate, inspect, scaffold Cells and AI-men"
+readme = "../../README.md"
+
+[[bin]]
+name = "kcell"
+path = "src/main.rs"
+
+[dependencies]
+kcell_core = { workspace = true }
+clap = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }

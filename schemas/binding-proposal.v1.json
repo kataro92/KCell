@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kcell.dev/schemas/binding-proposal.v1.json",
+  "title": "KCell BindingProposal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "const": "kcell.dev/v1" },
+    "kind": { "const": "BindingProposal" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["proposer", "generation"],
+      "properties": {
+        "proposer": { "type": "string", "minLength": 1 },
+        "generation": { "type": "integer", "minimum": 1 },
+        "reason": { "type": "string", "maxLength": 1024 }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bindings"],
+      "properties": {
+        "bindings": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["consumer", "provider", "capability"],
+            "properties": {
+              "consumer": { "type": "string", "minLength": 1 },
+              "provider": { "type": "string", "minLength": 1 },
+              "capability": { "type": "string", "minLength": 1 },
+              "required": { "type": "boolean", "default": true }
+            }
+          }
+        },
+        "replaceGeneration": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

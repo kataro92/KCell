@@ -16,7 +16,8 @@ Auto-config Cells may **propose** bindings; only the Host validates and applies 
 
 ## Where to put code
 
-- **Core** (`core/`): only if every Cell needs it (manifest, lifecycle, registry, binding, policy, execution interfaces)
+- **Core** (`crates/kcell-core/`): only if every Cell needs it (manifest, lifecycle, registry, binding, policy, execution interfaces)
+- **CLI** (`crates/kcell-cli/`): operator commands; keep thin
 - **Adapters** (`adapters/`): AG-UI, A2A, MCP, transports, observability backends
 - **Cells** (`cells/`): domain logic (brains, UIs, tools, auto-config)
 - **Do not** expand core to fix a single Cell’s needs
@@ -42,4 +43,5 @@ Use non-interactive CLI with stable exit codes when available. Prefer machine-re
 ## Docs
 
 - Spec and MVP scope: `docs/`
-- Research notes (non-normative): `nghien_cuu_kien_truc_agent.md`
+- Cell authoring for agents: `docs/cell-authoring-for-agents.md`
+- Schemas: `schemas/`
