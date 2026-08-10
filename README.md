@@ -12,44 +12,57 @@ Composable AI cells. Build specialized agents from a **Stem Cell**, compose them
 - **Stem Cell** — generic base that absorbs config, libraries, and code to become any specialized Cell
 - **AI-man** — a folder of Cells composed together (like an organism made of many cells)
 
-Example path: an Ollama brain Cell + web chatbot Cell + auto-config Cell become a local chat AI-man. Drop in a Cursor CLI brain later — the Host discovers it and the UI can offer Composer without rewriting the other Cells.
+Example (non-normative): one possible AI-man might wire a local model Cell, a chat UI Cell, and an auto-config Cell — then add another model Cell later. That scenario is illustrative only; the architecture does not prescribe those roles.
 
 ## High-level architecture
 
+KCell’s job is the **core Cell runtime and contracts** — the kernel other Cells and child repos specialize on. Product roles (models, UIs, tools, routers, …) are not fixed by this repo; they are just Specialized Cells built elsewhere.
+
 <p align="center">
-  <img src="docs/images/kcell-architecture.png" alt="KCell high-level architecture — Host core, Cells, and protocol adapters" width="100%" />
+  <img src="docs/images/kcell-architecture.png" alt="KCell architecture — core Host kernel with generic Specialized Cells and optional adapters" width="100%" />
 </p>
 
 ```mermaid
 flowchart TB
-    User[User] <-->|AG-UI| WebCell[WebChatCell]
-    WebCell --> Host[KCell Host]
-    AutoConfig[AutoConfigCell] -->|binding proposal| Host
-    Host --> Registry[Local Registry]
-    Host --> Lifecycle[Lifecycle]
-    Host --> Binding[Binding Resolver]
-    Host --> Policy[Policy Gate]
-    Host --> BrainO[OllamaBrainCell]
-    Host --> BrainC[CursorBrainCell]
-    Host --> WebCell
-    BrainO -->|MCP| Tools[Tool Cells]
-    BrainC -->|MCP| Tools
-    Stem[Stem Cell] -->|specialize| Specialized[Specialized Cells]
-    Specialized --> BrainO
-    Specialized --> WebCell
-    Specialized --> AutoConfig
-    Specialized --> BrainC
+    subgraph core [KCell core]
+        Host[Host]
+        Host --> Manifest[Manifest]
+        Host --> Lifecycle[Lifecycle]
+        Host --> Registry[Registry]
+        Host --> Binding[Binding]
+        Host --> Policy[Policy]
+    end
+
+    Stem[Stem Cell contract] -->|specialize via config code libs| Spec[Specialized Cells]
+    Spec --> CellA[Cell]
+    Spec --> CellB[Cell]
+    Spec --> CellN[Cell N]
+
+    CellA <-->|active / passive| CellB
+    CellB <-->|active / passive| CellN
+
+    Host -->|admit activate bind| CellA
+    Host --> CellB
+    Host --> CellN
+
+    CellA -.->|binding proposal optional| Host
+
+    Adapters[Optional adapters] -.-> Host
+    Adapters -.-> Spec
+    childRepos[Child repos] -->|depend on contracts| core
+    childRepos --> Spec
 ```
 
-| Layer | Responsibility |
-|-------|----------------|
-| **Host core** | Manifests, lifecycle, registry, binding apply, deny-by-default policy — no product logic |
-| **Stem → Specialized Cells** | Absorb config/code/libs into versioned Cell packages (brain, UI, auto-config, …) |
-| **Active / Passive** | Same Cell can call out and accept inbound work; not two hard Cell types |
-| **Adapters (out of core)** | AG-UI (user), A2A (agent↔agent), MCP (tools/data) |
-| **AI-man** | Composition manifest: which Cells, bindings, and shared policy to activate together |
+| Layer | What it is | What it is not |
+|-------|------------|----------------|
+| **Core / Host** | Tiny mechanisms: manifest, lifecycle, registry, binding, deny-by-default policy, execution interfaces | Not a product app, not a model vendor layer, not a UI kit |
+| **Stem Cell** | Generic specialize-from-inputs contract (config, code, libraries → Cell package) | Not a hard-coded “brain” or “chat” type |
+| **Specialized Cell** | Any package that declares capabilities, ports, and permissions | Not limited to the demo Cells in `examples/` |
+| **Active / Passive** | Communication *capabilities* on the same Cell | Not two separate Cell species |
+| **Adapters** | Optional bridges (protocols, transports, executors) outside core | Not required to invent a Cell |
+| **AI-man** | Composition of Cells + bindings + shared policy | Not a fixed topology from this README |
 
-Control plane stays small. Routing strategy, model vendors, and UI live in Cells or adapters — not in `kcell_core`.
+Anything domain-specific belongs in a **Cell** or a **child repo** that depends on these contracts. Core stays stable so extension stays open-ended.
 
 ## Non-functional requirements
 
