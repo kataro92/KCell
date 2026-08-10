@@ -1,7 +1,7 @@
 # KCell
 
 <p align="center">
-  <img src="docs/images/kcell-hero.png" alt="KCell concept — Stem Cell specializing into an AI-man of connected Cells" width="100%" />
+  <img src="docs/images/kcell-hero.png" alt="KCell — underwater organism built from Cells around a golden core Stem Cell that foundations all others" width="100%" />
 </p>
 
 Composable AI cells. Build specialized agents from a **Stem Cell**, compose them into an **AI-man**, and let them discover and connect at runtime.
