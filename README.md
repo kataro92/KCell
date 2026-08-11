@@ -57,6 +57,8 @@ docs/       # Guides
 
 Before pushing code: `scripts/check.sh` (or install `scripts/install-git-hooks.sh`).
 
+Wiki pages (source in [`wiki/`](wiki/)): publish with `scripts/publish-wiki.sh` after the GitHub Wiki tab has its first page.
+
 ## License
 
 [MIT](LICENSE)
