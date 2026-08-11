@@ -4,8 +4,12 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
+homepage.workspace = true
+authors.workspace = true
 description = "KCell AG-UI adapter — HTTP+SSE event stream over Host control socket"
 readme = "README.md"
+keywords = ["ai", "ag-ui", "agents"]
+categories = ["command-line-utilities", "web-programming"]
 
 [[bin]]
 name = "kcell-agui"

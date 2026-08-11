@@ -4,8 +4,12 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
+homepage.workspace = true
+authors.workspace = true
 description = "KCell A2A adapter — Agent Card + JSON-RPC message/send over Host control socket"
 readme = "README.md"
+keywords = ["ai", "a2a", "agents"]
+categories = ["command-line-utilities", "web-programming"]
 
 [[bin]]
 name = "kcell-a2a"

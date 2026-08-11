@@ -4,8 +4,12 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
+homepage.workspace = true
+authors.workspace = true
 description = "KCell host core: manifests, lifecycle, registry, binding, policy"
-readme = "../../README.md"
+readme = "README.md"
+keywords = ["ai", "agents", "runtime", "cells"]
+categories = ["command-line-utilities", "development-tools"]
 
 [features]
 default = []

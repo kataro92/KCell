@@ -4,8 +4,12 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
+homepage.workspace = true
+authors.workspace = true
 description = "KCell MCP adapter — expose Host capabilities as MCP tools over stdio"
 readme = "README.md"
+keywords = ["ai", "mcp", "agents"]
+categories = ["command-line-utilities"]
 
 [[bin]]
 name = "kcell-mcp"
