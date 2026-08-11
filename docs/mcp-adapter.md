@@ -3,8 +3,8 @@
 Optional bridge: MCP client ↔ `kcell serve`. Not part of `kcell_core`.
 
 ```bash
-cargo run -p kcell -- serve examples/echo-aiman/ai-man.yaml --root .
-cargo run -p kcell-mcp -- --socket .kcell/kcell.sock --consumer caller-cell
+cargo run -p kcell-cli -- serve examples/echo-aiman/ai-man.yaml --root .
+cargo run -p kcell-cli-mcp -- --socket .kcell/kcell.sock --consumer caller-cell
 ```
 
 | MCP | Host |

@@ -3,8 +3,8 @@
 Optional bridge: HTTP + SSE ↔ `kcell serve`. Not part of `kcell_core`.
 
 ```bash
-cargo run -p kcell -- serve examples/echo-aiman/ai-man.yaml --root .
-cargo run -p kcell-agui -- \
+cargo run -p kcell-cli -- serve examples/echo-aiman/ai-man.yaml --root .
+cargo run -p kcell-cli-agui -- \
   --socket .kcell/kcell.sock \
   --consumer caller-cell \
   --capability echo \

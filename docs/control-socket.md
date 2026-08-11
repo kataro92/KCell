@@ -59,7 +59,7 @@ cargo run -- call shutdown
 Watch: first scan is baseline only; later scans load new/changed Cells and unload removed ones. Use `--auto-bind` to rebind after loads.
 
 ```bash
-cargo run -p kcell --features notify -- serve … --watch cells --watch-notify
+cargo run -p kcell-cli --features notify -- serve … --watch cells --watch-notify
 ```
 
 `--watch-interval-ms` is the poll period (or notify debounce).
