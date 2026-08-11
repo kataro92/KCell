@@ -40,8 +40,8 @@ pub use lifecycle::{CellState, Lifecycle, TransitionEvent};
 pub use manifest::{
     load_aiman_from_path, load_binding_proposal_from_path, load_cell_from_path, validate_aiman,
     validate_binding_proposal, validate_cell, AIManManifest, BindingProposal, Capability,
-    CellManifest, CellMetadata, CellSpec, Communication, Permissions, ProposedBinding,
-    Requirement, RestartPolicy, RuntimeKind, RuntimeSpec, StaticBinding,
+    CellManifest, CellMetadata, CellSpec, Communication, Permissions, ProposedBinding, Requirement,
+    RestartPolicy, RuntimeKind, RuntimeSpec, StaticBinding,
 };
 pub use package::{build_cell_dir, package_from_manifest, CellPackageMeta};
 pub use policy::{AdmissionDecision, PolicyGate};

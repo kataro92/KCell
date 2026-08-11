@@ -134,30 +134,58 @@ fn apply_overlay(cell: &mut CellManifest, req: &SpecializeRequest) -> Result<()>
             .entrypoint
             .clone()
             .or_else(|| cell.spec.runtime.entrypoint.clone()),
-        artifact: req.artifact.clone().or_else(|| cell.spec.runtime.artifact.clone()),
+        artifact: req
+            .artifact
+            .clone()
+            .or_else(|| cell.spec.runtime.artifact.clone()),
     };
 
     match req.runtime {
         RuntimeKind::Wasi => {
-            if runtime.artifact.as_ref().map(|s| s.is_empty()).unwrap_or(true) {
+            if runtime
+                .artifact
+                .as_ref()
+                .map(|s| s.is_empty())
+                .unwrap_or(true)
+            {
                 return Err(Error::Validation(
                     "wasi specialize requires --artifact (.wasm path)".into(),
                 ));
             }
-            if runtime.entrypoint.as_ref().map(|s| s.is_empty()).unwrap_or(true) {
+            if runtime
+                .entrypoint
+                .as_ref()
+                .map(|s| s.is_empty())
+                .unwrap_or(true)
+            {
                 runtime.entrypoint = Some("_start".into());
             }
         }
         RuntimeKind::Subprocess => {
-            if runtime.entrypoint.as_ref().map(|s| s.is_empty()).unwrap_or(true) {
+            if runtime
+                .entrypoint
+                .as_ref()
+                .map(|s| s.is_empty())
+                .unwrap_or(true)
+            {
                 runtime.entrypoint = Some("kcell".into());
             }
-            if runtime.artifact.as_ref().map(|s| s.is_empty()).unwrap_or(true) {
+            if runtime
+                .artifact
+                .as_ref()
+                .map(|s| s.is_empty())
+                .unwrap_or(true)
+            {
                 runtime.artifact = Some("worker".into());
             }
         }
         RuntimeKind::Inprocess => {
-            if runtime.entrypoint.as_ref().map(|s| s.is_empty()).unwrap_or(true) {
+            if runtime
+                .entrypoint
+                .as_ref()
+                .map(|s| s.is_empty())
+                .unwrap_or(true)
+            {
                 runtime.entrypoint = Some("main".into());
             }
             // Clear stem artifact unless caller set one.
@@ -215,7 +243,10 @@ mod tests {
 
     #[test]
     fn parse_cap_tokens() {
-        assert_eq!(parse_cap_token("echo").unwrap(), ("echo".into(), "1".into()));
+        assert_eq!(
+            parse_cap_token("echo").unwrap(),
+            ("echo".into(), "1".into())
+        );
         assert_eq!(
             parse_cap_token("echo:2").unwrap(),
             ("echo".into(), "2".into())
@@ -255,10 +286,7 @@ spec:
 
     #[test]
     fn specialize_overlay_and_refuse_overwrite() {
-        let root = std::env::temp_dir().join(format!(
-            "kcell-specialize-{}",
-            std::process::id()
-        ));
+        let root = std::env::temp_dir().join(format!("kcell-specialize-{}", std::process::id()));
         let _ = fs::remove_dir_all(&root);
         fs::create_dir_all(&root).unwrap();
         let stem = stem_fixture(&root);
@@ -313,10 +341,8 @@ spec:
 
     #[test]
     fn wasi_requires_artifact() {
-        let root = std::env::temp_dir().join(format!(
-            "kcell-specialize-wasi-{}",
-            std::process::id()
-        ));
+        let root =
+            std::env::temp_dir().join(format!("kcell-specialize-wasi-{}", std::process::id()));
         let _ = fs::remove_dir_all(&root);
         fs::create_dir_all(&root).unwrap();
         let stem = stem_fixture(&root);

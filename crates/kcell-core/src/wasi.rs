@@ -73,9 +73,9 @@ impl WasiExecutor {
         #[cfg(not(feature = "wasi"))]
         {
             let _ = (cell_name, request, spec);
-            return Err(Error::Validation(
+            Err(Error::Validation(
                 "WASI executor requires building with `--features wasi`".into(),
-            ));
+            ))
         }
 
         #[cfg(feature = "wasi")]
@@ -111,10 +111,7 @@ fn invoke_wasmtime(cell_name: &str, spec: &WasiSpec, request: &Envelope) -> Resu
     use wasmtime_wasi::preview1::{self, WasiP1Ctx};
     use wasmtime_wasi::I32Exit;
 
-    let timeout = request
-        .timeout_ms
-        .unwrap_or(spec.timeout_ms)
-        .max(1);
+    let timeout = request.timeout_ms.unwrap_or(spec.timeout_ms).max(1);
 
     let engine = shared_engine();
     let module = Module::from_file(engine, &spec.module_path).map_err(|e| {

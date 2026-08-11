@@ -80,10 +80,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn handle_connection(
-    stream: &mut std::net::TcpStream,
-    bridge: &Bridge,
-) -> Result<(), String> {
+fn handle_connection(stream: &mut std::net::TcpStream, bridge: &Bridge) -> Result<(), String> {
     let req = read_request(stream)?;
     let path = req.path.split('?').next().unwrap_or(req.path.as_str());
 
@@ -99,8 +96,8 @@ fn handle_agent(
     bridge: &Bridge,
     body: &[u8],
 ) -> Result<(), String> {
-    let input: RunAgentInput = serde_json::from_slice(body)
-        .map_err(|e| format!("invalid RunAgentInput JSON: {e}"))?;
+    let input: RunAgentInput =
+        serde_json::from_slice(body).map_err(|e| format!("invalid RunAgentInput JSON: {e}"))?;
     let ids = resolve_ids(&input);
     let payload = payload_from_messages(&input.messages)?;
 
@@ -109,7 +106,8 @@ fn handle_agent(
 
     match bridge.invoke(payload) {
         Ok(result) => {
-            let delta = serde_json::to_string_pretty(&result).unwrap_or_else(|_| result.to_string());
+            let delta =
+                serde_json::to_string_pretty(&result).unwrap_or_else(|_| result.to_string());
             write_sse_event(stream, &event_text_start(&ids))?;
             write_sse_event(stream, &event_text_content(&ids, &delta))?;
             write_sse_event(stream, &event_text_end(&ids))?;

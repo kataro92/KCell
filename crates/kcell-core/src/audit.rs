@@ -49,7 +49,7 @@ impl Default for AuditLog {
 impl AuditLog {
     pub fn with_capacity(cap: usize) -> Self {
         Self {
-            events: VecDeque::with_capacity(cap.min(DEFAULT_CAP).max(1)),
+            events: VecDeque::with_capacity(cap.clamp(1, DEFAULT_CAP)),
             cap: cap.max(1),
             next_seq: 1,
         }

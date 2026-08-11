@@ -100,16 +100,20 @@ fn check_pair(registry: &LocalRegistry, b: &ProposedBinding) -> Result<()> {
         )));
     }
 
-    let requires = consumer.manifest.spec.requires.iter().any(|r| r.name == b.capability)
-        || consumer.manifest.spec.ports.iter().any(|p| p.name == b.capability);
-    // Soft check: consumer should declare the capability as a requirement when present.
-    if !requires
-        && !consumer
+    let requires = consumer
+        .manifest
+        .spec
+        .requires
+        .iter()
+        .any(|r| r.name == b.capability)
+        || consumer
             .manifest
             .spec
-            .requires
-            .is_empty()
-    {
+            .ports
+            .iter()
+            .any(|p| p.name == b.capability);
+    // Soft check: consumer should declare the capability as a requirement when present.
+    if !requires && !consumer.manifest.spec.requires.is_empty() {
         // If the consumer lists requirements, capability must be among them (or optional peers).
         let listed = consumer
             .manifest
@@ -261,7 +265,10 @@ spec:
         .unwrap();
 
         let (set, result) = apply_proposal(&reg, &BindingSet::default(), proposal).unwrap();
-        assert!(matches!(result, BindingApplyResult::Applied { generation: 1 }));
+        assert!(matches!(
+            result,
+            BindingApplyResult::Applied { generation: 1 }
+        ));
         assert_eq!(set.bindings().len(), 1);
     }
 }

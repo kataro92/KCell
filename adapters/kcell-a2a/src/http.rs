@@ -16,9 +16,7 @@ pub fn read_request(stream: &mut TcpStream) -> Result<HttpRequest, String> {
     let mut buf = Vec::new();
     let mut tmp = [0u8; 1024];
     loop {
-        let n = stream
-            .read(&mut tmp)
-            .map_err(|e| format!("read: {e}"))?;
+        let n = stream.read(&mut tmp).map_err(|e| format!("read: {e}"))?;
         if n == 0 {
             break;
         }
@@ -73,7 +71,12 @@ fn find_header_end(buf: &[u8]) -> Option<usize> {
     buf.windows(4).position(|w| w == b"\r\n\r\n")
 }
 
-pub fn write_json(stream: &mut TcpStream, status: u16, reason: &str, body: &Value) -> Result<(), String> {
+pub fn write_json(
+    stream: &mut TcpStream,
+    status: u16,
+    reason: &str,
+    body: &Value,
+) -> Result<(), String> {
     let bytes = serde_json::to_vec(body).map_err(|e| e.to_string())?;
     let header = format!(
         "HTTP/1.1 {status} {reason}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
@@ -89,7 +92,12 @@ pub fn write_json(stream: &mut TcpStream, status: u16, reason: &str, body: &Valu
     Ok(())
 }
 
-pub fn write_plain(stream: &mut TcpStream, status: u16, reason: &str, body: &str) -> Result<(), String> {
+pub fn write_plain(
+    stream: &mut TcpStream,
+    status: u16,
+    reason: &str,
+    body: &str,
+) -> Result<(), String> {
     let header = format!(
         "HTTP/1.1 {status} {reason}\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
         body.len()

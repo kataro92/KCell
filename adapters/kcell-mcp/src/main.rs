@@ -9,9 +9,7 @@ use clap::Parser;
 use serde_json::{json, Value};
 
 use bridge::Bridge;
-use mcp::{
-    err_result, initialize_result, is_notification, ok_result, read_message, write_message,
-};
+use mcp::{err_result, initialize_result, is_notification, ok_result, read_message, write_message};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -55,11 +53,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         bridge.consumer
     );
 
-    loop {
-        let Some(req) = read_message(&mut stdin)? else {
-            break;
-        };
-
+    while let Some(req) = read_message(&mut stdin)? {
         if is_notification(&req) {
             if req.method == "notifications/initialized" {
                 // no response for notifications

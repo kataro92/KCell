@@ -41,7 +41,11 @@ pub fn build_cell_dir(cell_dir: impl AsRef<Path>) -> Result<(CellPackageMeta, Pa
     Ok((meta, out))
 }
 
-pub fn package_from_manifest(manifest: &CellManifest, yaml_bytes: &[u8], source: &str) -> CellPackageMeta {
+pub fn package_from_manifest(
+    manifest: &CellManifest,
+    yaml_bytes: &[u8],
+    source: &str,
+) -> CellPackageMeta {
     CellPackageMeta {
         name: manifest.metadata.name.clone(),
         version: manifest.metadata.version.clone(),

@@ -98,18 +98,29 @@ pub fn validate_aiman(man: &AIManManifest) -> Result<()> {
         )));
     }
     if man.kind != "AIMan" {
-        return Err(Error::Validation(format!("expected kind AIMan, got {}", man.kind)));
+        return Err(Error::Validation(format!(
+            "expected kind AIMan, got {}",
+            man.kind
+        )));
     }
     if man.spec.cells.is_empty() {
-        return Err(Error::Validation("ai-man must list at least one cell".into()));
+        return Err(Error::Validation(
+            "ai-man must list at least one cell".into(),
+        ));
     }
     let mut names = std::collections::BTreeSet::new();
     for cell in &man.spec.cells {
         if !names.insert(cell.name.as_str()) {
-            return Err(Error::Validation(format!("duplicate cell name `{}`", cell.name)));
+            return Err(Error::Validation(format!(
+                "duplicate cell name `{}`",
+                cell.name
+            )));
         }
         if cell.path.is_empty() {
-            return Err(Error::Validation(format!("cell `{}` path is empty", cell.name)));
+            return Err(Error::Validation(format!(
+                "cell `{}` path is empty",
+                cell.name
+            )));
         }
     }
     for b in &man.spec.bindings {
@@ -126,7 +137,9 @@ pub fn validate_aiman(man: &AIManManifest) -> Result<()> {
             )));
         }
         if b.capability.is_empty() {
-            return Err(Error::Validation("binding capability must be non-empty".into()));
+            return Err(Error::Validation(
+                "binding capability must be non-empty".into(),
+            ));
         }
     }
     for cell in &man.spec.cells {

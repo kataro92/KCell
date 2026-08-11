@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::error::{Error, Result};
 use crate::manifest::CellManifest;
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PolicyGate {
     /// When false (default), only explicitly granted permissions are allowed.
@@ -13,19 +13,6 @@ pub struct PolicyGate {
     pub granted_secrets: Vec<String>,
     pub granted_peers: Vec<String>,
     pub granted_filesystem: Vec<String>,
-}
-
-impl Default for PolicyGate {
-    fn default() -> Self {
-        Self {
-            default_allow: false,
-            granted_network: Vec::new(),
-            granted_process: Vec::new(),
-            granted_secrets: Vec::new(),
-            granted_peers: Vec::new(),
-            granted_filesystem: Vec::new(),
-        }
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

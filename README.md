@@ -55,6 +55,8 @@ docs/       # Guides
 - [Keep things small & fast](docs/nfr.md)
 - [Compatibility when upgrading](docs/compatibility.md)
 
+Before pushing code: `scripts/check.sh` (or install `scripts/install-git-hooks.sh`).
+
 ## License
 
 [MIT](LICENSE)

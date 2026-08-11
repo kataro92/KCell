@@ -136,7 +136,10 @@ mod tests {
                 content: json!("hello"),
             },
         ];
-        assert_eq!(payload_from_messages(&msgs).unwrap(), json!({"text":"hello"}));
+        assert_eq!(
+            payload_from_messages(&msgs).unwrap(),
+            json!({"text":"hello"})
+        );
     }
 
     #[test]

@@ -12,7 +12,11 @@ use kcell_core::{
 use serde_json::json;
 
 #[derive(Parser, Debug)]
-#[command(name = "kcell", version, about = "KCell — compose AI cells into an AI-man")]
+#[command(
+    name = "kcell",
+    version,
+    about = "KCell — compose AI cells into an AI-man"
+)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -393,7 +397,11 @@ fn cmd_validate(path: &Path, json: bool) -> Result<(), Box<dyn std::error::Error
                     })
                 );
             } else {
-                println!("ok: AIMan {} ({} cells)", m.metadata.name, m.spec.cells.len());
+                println!(
+                    "ok: AIMan {} ({} cells)",
+                    m.metadata.name,
+                    m.spec.cells.len()
+                );
             }
         }
         "BindingProposal" => {
@@ -450,6 +458,7 @@ fn parse_runtime(s: &str) -> Result<RuntimeKind, Box<dyn std::error::Error>> {
     }
 }
 
+#[allow(clippy::too_many_arguments)] // mirrors clap Specialize flags
 fn cmd_specialize(
     name: &str,
     dir: Option<PathBuf>,
@@ -625,8 +634,13 @@ fn cmd_worker_autoconfig() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn propose_from_snapshot(payload: &serde_json::Value) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
-    let generation = payload.get("generation").and_then(|v| v.as_u64()).unwrap_or(0);
+fn propose_from_snapshot(
+    payload: &serde_json::Value,
+) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
+    let generation = payload
+        .get("generation")
+        .and_then(|v| v.as_u64())
+        .unwrap_or(0);
     let cells = payload
         .get("cells")
         .and_then(|v| v.as_array())
@@ -663,7 +677,10 @@ fn propose_from_snapshot(payload: &serde_json::Value) -> Result<serde_json::Valu
             if cap.is_empty() {
                 continue;
             }
-            let optional = req.get("optional").and_then(|v| v.as_bool()).unwrap_or(false);
+            let optional = req
+                .get("optional")
+                .and_then(|v| v.as_bool())
+                .unwrap_or(false);
             let version = req
                 .get("version")
                 .and_then(|v| v.as_str())
@@ -682,7 +699,9 @@ fn propose_from_snapshot(payload: &serde_json::Value) -> Result<serde_json::Valu
                     c.get("provides")
                         .and_then(|v| v.as_array())
                         .map(|ps| {
-                            ps.iter().any(|p| p.get("name").and_then(|v| v.as_str()) == Some(cap.as_str()))
+                            ps.iter().any(|p| {
+                                p.get("name").and_then(|v| v.as_str()) == Some(cap.as_str())
+                            })
                         })
                         .unwrap_or(false)
                 })
@@ -692,7 +711,8 @@ fn propose_from_snapshot(payload: &serde_json::Value) -> Result<serde_json::Valu
                     .get("provides")
                     .and_then(|v| v.as_array())
                     .and_then(|ps| {
-                        ps.iter().find(|p| p.get("name").and_then(|v| v.as_str()) == Some(cap.as_str()))
+                        ps.iter()
+                            .find(|p| p.get("name").and_then(|v| v.as_str()) == Some(cap.as_str()))
                     })
                     .and_then(|p| p.get("version").and_then(|v| v.as_str()))
                     .unwrap_or("");
@@ -700,7 +720,8 @@ fn propose_from_snapshot(payload: &serde_json::Value) -> Result<serde_json::Valu
                     .get("provides")
                     .and_then(|v| v.as_array())
                     .and_then(|ps| {
-                        ps.iter().find(|p| p.get("name").and_then(|v| v.as_str()) == Some(cap.as_str()))
+                        ps.iter()
+                            .find(|p| p.get("name").and_then(|v| v.as_str()) == Some(cap.as_str()))
                     })
                     .and_then(|p| p.get("version").and_then(|v| v.as_str()))
                     .unwrap_or("");
@@ -713,7 +734,11 @@ fn propose_from_snapshot(payload: &serde_json::Value) -> Result<serde_json::Valu
                 })
             });
             if let Some(p) = providers.first() {
-                let provider = p.get("name").and_then(|v| v.as_str()).unwrap_or("").to_string();
+                let provider = p
+                    .get("name")
+                    .and_then(|v| v.as_str())
+                    .unwrap_or("")
+                    .to_string();
                 if !provider.is_empty() {
                     bindings.push(json!({
                         "consumer": consumer,
@@ -788,6 +813,7 @@ fn cmd_discover(
     Ok(())
 }
 
+#[allow(clippy::too_many_arguments)] // mirrors clap Run flags
 fn cmd_run(
     path: &Path,
     root: Option<PathBuf>,
@@ -881,10 +907,7 @@ fn cmd_run(
             host.bindings().bindings().len()
         );
         for b in host.bindings().bindings() {
-            println!(
-                "  {} -[{}]-> {}",
-                b.consumer, b.capability, b.provider
-            );
+            println!("  {} -[{}]-> {}", b.consumer, b.capability, b.provider);
         }
         println!("providers: {}", providers.len());
         for p in &providers {
@@ -896,7 +919,9 @@ fn cmd_run(
         for r in host.registry().iter() {
             println!(
                 "  - {} ({:?}) => {:?}",
-                r.manifest.metadata.name, r.manifest.spec.runtime.kind, r.state()
+                r.manifest.metadata.name,
+                r.manifest.spec.runtime.kind,
+                r.state()
             );
         }
         if let Some(reply) = invoke_result {
@@ -918,6 +943,7 @@ fn cmd_run(
     Ok(())
 }
 
+#[allow(clippy::too_many_arguments)] // mirrors clap Serve flags
 fn cmd_serve(
     path: &Path,
     root: Option<PathBuf>,
@@ -1024,9 +1050,7 @@ fn cmd_call(socket: &Path, op: CallOp, json: bool) -> Result<(), Box<dyn std::er
             ControlRequest::invoke(consumer, capability, payload)
         }
         CallOp::Audit { limit } => ControlRequest::audit(limit),
-        CallOp::Load { path, replace } => {
-            ControlRequest::load(path.display().to_string(), replace)
-        }
+        CallOp::Load { path, replace } => ControlRequest::load(path.display().to_string(), replace),
         CallOp::Unload { cell } => ControlRequest::unload(cell),
         CallOp::ApplyBindings { path } => {
             ControlRequest::apply_bindings(path.display().to_string())

@@ -24,11 +24,10 @@ fn autoconfig_propose_and_apply() {
         .expect("propose_from_cell");
     assert_eq!(proposal.metadata.proposer, "cell:auto-config-cell");
     assert!(applied.is_some());
-    assert!(
-        host.bindings()
-            .provider_for("caller-cell", "echo")
-            .is_some()
-    );
+    assert!(host
+        .bindings()
+        .provider_for("caller-cell", "echo")
+        .is_some());
 
     let reply = host
         .invoke(

@@ -36,14 +36,22 @@ impl LocalRegistry {
         Self::default()
     }
 
-    pub fn register(&mut self, instance_id: impl Into<String>, manifest: CellManifest) -> Result<()> {
+    pub fn register(
+        &mut self,
+        instance_id: impl Into<String>,
+        manifest: CellManifest,
+    ) -> Result<()> {
         let instance_id = instance_id.into();
         let name = manifest.metadata.name.clone();
         if self.by_instance.contains_key(&instance_id) {
-            return Err(Error::Validation(format!("instance `{instance_id}` exists")));
+            return Err(Error::Validation(format!(
+                "instance `{instance_id}` exists"
+            )));
         }
         if self.by_name.contains_key(&name) {
-            return Err(Error::Validation(format!("cell name `{name}` already registered")));
+            return Err(Error::Validation(format!(
+                "cell name `{name}` already registered"
+            )));
         }
         let lifecycle = Lifecycle::new(name.clone());
         self.by_name.insert(name, instance_id.clone());

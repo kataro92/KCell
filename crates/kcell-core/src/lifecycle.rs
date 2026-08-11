@@ -64,7 +64,11 @@ impl Lifecycle {
         &self.events
     }
 
-    pub fn transition(&mut self, to: CellState, reason: Option<String>) -> Result<&TransitionEvent> {
+    pub fn transition(
+        &mut self,
+        to: CellState,
+        reason: Option<String>,
+    ) -> Result<&TransitionEvent> {
         if self.state == to {
             // Idempotent no-op: record only once if already there.
             return self
@@ -104,15 +108,12 @@ impl Lifecycle {
         if matches!(self.state, CellState::Active) {
             return Ok(());
         }
-        let idx = PATH
-            .iter()
-            .position(|s| *s == self.state)
-            .ok_or_else(|| {
-                Error::Lifecycle(format!(
-                    "{}: cannot activate from {:?}",
-                    self.cell, self.state
-                ))
-            })?;
+        let idx = PATH.iter().position(|s| *s == self.state).ok_or_else(|| {
+            Error::Lifecycle(format!(
+                "{}: cannot activate from {:?}",
+                self.cell, self.state
+            ))
+        })?;
         for &next in &PATH[idx + 1..] {
             self.transition(next, None)?;
         }
@@ -123,10 +124,10 @@ impl Lifecycle {
         if matches!(self.state, CellState::Stopped) {
             return Ok(());
         }
-        if self.state.can_route() || matches!(self.state, CellState::Starting | CellState::Staged) {
-            if self.state != CellState::Draining {
-                self.transition(CellState::Draining, Some("stop".into()))?;
-            }
+        if (self.state.can_route() || matches!(self.state, CellState::Starting | CellState::Staged))
+            && self.state != CellState::Draining
+        {
+            self.transition(CellState::Draining, Some("stop".into()))?;
         }
         if self.state == CellState::Draining {
             self.transition(CellState::Stopped, Some("drained".into()))?;
@@ -145,6 +146,7 @@ impl Lifecycle {
     }
 }
 
+#[allow(clippy::match_like_matches_macro)] // explicit transition table is clearer than one matches!
 fn allowed(from: CellState, to: CellState) -> bool {
     if matches!(to, CellState::Failed) {
         return !from.is_terminal() || matches!(from, CellState::Draining);

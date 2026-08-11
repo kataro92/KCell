@@ -9,7 +9,11 @@ pub fn handle_rpc(bridge: &Bridge, body: &[u8]) -> Result<Value, String> {
         serde_json::from_slice(body).map_err(|e| format!("invalid JSON-RPC body: {e}"))?;
     let jsonrpc = req.get("jsonrpc").and_then(|v| v.as_str()).unwrap_or("");
     if jsonrpc != "2.0" {
-        return Ok(rpc_error(req.get("id").cloned(), -32600, "jsonrpc must be 2.0"));
+        return Ok(rpc_error(
+            req.get("id").cloned(),
+            -32600,
+            "jsonrpc must be 2.0",
+        ));
     }
     let id = req.get("id").cloned();
     let method = req.get("method").and_then(|v| v.as_str()).unwrap_or("");

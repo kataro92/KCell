@@ -80,7 +80,11 @@ impl ControlRequest {
         r
     }
 
-    pub fn invoke(consumer: impl Into<String>, capability: impl Into<String>, payload: Value) -> Self {
+    pub fn invoke(
+        consumer: impl Into<String>,
+        capability: impl Into<String>,
+        payload: Value,
+    ) -> Self {
         let mut r = Self::base("invoke");
         r.capability = Some(capability.into());
         r.consumer = Some(consumer.into());
@@ -428,8 +432,8 @@ fn write_response(mut stream: impl Write, resp: &ControlResponse) -> Result<()> 
 mod tests {
     use super::*;
     use crate::manifest::{
-        Capability, CellManifest, CellMetadata, CellSpec, Communication, Permissions, RestartPolicy,
-        RuntimeKind, RuntimeSpec,
+        Capability, CellManifest, CellMetadata, CellSpec, Communication, Permissions,
+        RestartPolicy, RuntimeKind, RuntimeSpec,
     };
     use std::thread;
     use std::time::Duration;
@@ -492,14 +496,16 @@ mod tests {
 
         let (resp, _) = handle_control(
             &mut host,
-            ControlRequest::load(root.join("cells/echo-sub-cell").display().to_string(), false),
+            ControlRequest::load(
+                root.join("cells/echo-sub-cell").display().to_string(),
+                false,
+            ),
         )
         .unwrap();
         assert!(resp.ok, "{resp:?}");
-        assert!(host.discover(Some("echo-sub")).len() >= 1);
+        assert!(!host.discover(Some("echo-sub")).is_empty());
 
-        let (resp, _) =
-            handle_control(&mut host, ControlRequest::unload("echo-sub-cell")).unwrap();
+        let (resp, _) = handle_control(&mut host, ControlRequest::unload("echo-sub-cell")).unwrap();
         assert!(resp.ok);
         assert!(host.discover(Some("echo-sub")).is_empty());
     }

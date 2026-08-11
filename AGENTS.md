@@ -50,6 +50,7 @@ Prefer `--json` and schemas. Exit `0` = success.
 - Do not replace AG-UI / A2A / MCP at the boundary  
 - Do not force child repos to patch `kcell_core`  
 - Contract changes follow [`docs/compatibility.md`](docs/compatibility.md); keep `tests/fixtures/compat/` green  
+- **Before every push:** run `scripts/check.sh` (fmt + clippy `-D warnings` + `kcell_core` lib tests). Install the git hook once with `scripts/install-git-hooks.sh`. Do not push if check fails.  
 
 ## Docs
 

@@ -40,8 +40,6 @@ pub fn discover_providers(registry: &LocalRegistry, capability: Option<&str>) ->
             });
         }
     }
-    out.sort_by(|a, b| {
-        (&a.capability, &a.cell).cmp(&(&b.capability, &b.cell))
-    });
+    out.sort_by(|a, b| (&a.capability, &a.cell).cmp(&(&b.capability, &b.cell)));
     out
 }

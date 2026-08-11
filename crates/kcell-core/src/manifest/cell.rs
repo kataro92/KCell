@@ -197,7 +197,10 @@ pub fn validate_cell(cell: &CellManifest) -> Result<()> {
         )));
     }
     if cell.kind != "Cell" {
-        return Err(Error::Validation(format!("expected kind Cell, got {}", cell.kind)));
+        return Err(Error::Validation(format!(
+            "expected kind Cell, got {}",
+            cell.kind
+        )));
     }
     validate_name(&cell.metadata.name)?;
     validate_semver(&cell.metadata.version)?;
@@ -213,12 +216,16 @@ pub fn validate_cell(cell: &CellManifest) -> Result<()> {
     }
     for cap in &cell.spec.provides {
         if cap.name.is_empty() || cap.version.is_empty() {
-            return Err(Error::Validation("provide capability name/version required".into()));
+            return Err(Error::Validation(
+                "provide capability name/version required".into(),
+            ));
         }
     }
     for req in &cell.spec.requires {
         if req.name.is_empty() || req.version.is_empty() {
-            return Err(Error::Validation("require capability name/version required".into()));
+            return Err(Error::Validation(
+                "require capability name/version required".into(),
+            ));
         }
     }
     Ok(())
@@ -226,13 +233,10 @@ pub fn validate_cell(cell: &CellManifest) -> Result<()> {
 
 fn validate_name(name: &str) -> Result<()> {
     let ok = name.len() <= 63
-        && name
-            .chars()
-            .enumerate()
-            .all(|(i, c)| match (i, c) {
-                (0, c) => c.is_ascii_lowercase(),
-                (_, c) => c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-',
-            });
+        && name.chars().enumerate().all(|(i, c)| match (i, c) {
+            (0, c) => c.is_ascii_lowercase(),
+            (_, c) => c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-',
+        });
     if ok {
         Ok(())
     } else {

@@ -266,14 +266,15 @@ impl Host {
         found
     }
 
-    pub fn register_cell(&mut self, instance_id: impl Into<String>, manifest: CellManifest) -> Result<()> {
+    pub fn register_cell(
+        &mut self,
+        instance_id: impl Into<String>,
+        manifest: CellManifest,
+    ) -> Result<()> {
         let name = manifest.metadata.name.clone();
         self.registry.register(instance_id, manifest)?;
-        self.audit.record(
-            AuditKind::Registered,
-            Some(name.clone()),
-            "cell registered",
-        );
+        self.audit
+            .record(AuditKind::Registered, Some(name.clone()), "cell registered");
         Ok(())
     }
 
@@ -310,11 +311,8 @@ impl Host {
                 );
             }
             Err(e) => {
-                self.audit.record(
-                    AuditKind::AdmitDenied,
-                    Some(name.into()),
-                    e.to_string(),
-                );
+                self.audit
+                    .record(AuditKind::AdmitDenied, Some(name.into()), e.to_string());
                 return Err(e);
             }
         }
@@ -392,11 +390,7 @@ impl Host {
                 );
             }
         }
-        let state = self
-            .registry
-            .by_name(name)
-            .expect("just activated")
-            .state();
+        let state = self.registry.by_name(name).expect("just activated").state();
         let caps: Vec<(String, String)> = self
             .registry
             .by_name(name)
@@ -409,8 +403,11 @@ impl Host {
                     .collect()
             })
             .unwrap_or_default();
-        self.audit
-            .record(AuditKind::Activated, Some(name.into()), format!("{state:?}"));
+        self.audit.record(
+            AuditKind::Activated,
+            Some(name.into()),
+            format!("{state:?}"),
+        );
         self.bus.publish(BusEvent::CellState {
             cell: name.into(),
             state,
@@ -464,11 +461,8 @@ impl Host {
             self.cell_dirs.remove(&name);
             self.forget_cell_runtime(&name);
             self.detach_bindings_for_cell(&name);
-            self.audit.record(
-                AuditKind::Stopped,
-                Some(name.clone()),
-                "removed for reload",
-            );
+            self.audit
+                .record(AuditKind::Stopped, Some(name.clone()), "removed for reload");
         }
 
         self.cell_dirs.insert(name.clone(), dir.to_path_buf());
@@ -514,7 +508,8 @@ impl Host {
                 Some(name.into()),
                 format!("detach bindings generation={generation} count={count}"),
             );
-            self.bus.publish(BusEvent::BindingChanged { generation, count });
+            self.bus
+                .publish(BusEvent::BindingChanged { generation, count });
         }
     }
 
@@ -526,7 +521,10 @@ impl Host {
         self.apply_binding_proposal(proposal)
     }
 
-    pub fn apply_binding_proposal(&mut self, proposal: BindingProposal) -> Result<BindingApplyResult> {
+    pub fn apply_binding_proposal(
+        &mut self,
+        proposal: BindingProposal,
+    ) -> Result<BindingApplyResult> {
         let (next, result) = apply_proposal(&self.registry, &self.bindings, proposal)?;
         match &result {
             BindingApplyResult::Applied { generation } => {
@@ -559,8 +557,11 @@ impl Host {
         apply: bool,
         include_optional: bool,
     ) -> Result<(crate::manifest::BindingProposal, Option<BindingApplyResult>)> {
-        let proposal =
-            crate::autobind::propose_auto_bindings(&self.registry, &self.bindings, include_optional);
+        let proposal = crate::autobind::propose_auto_bindings(
+            &self.registry,
+            &self.bindings,
+            include_optional,
+        );
         let mut changed = proposal.spec.bindings.len() != self.bindings.bindings().len();
         if !changed {
             for b in &proposal.spec.bindings {
@@ -709,11 +710,10 @@ impl Host {
             "binding-propose",
             Envelope::request("binding-propose", snapshot),
         )?;
-        let proposal_val = reply
-            .payload
-            .get("proposal")
-            .cloned()
-            .ok_or_else(|| Error::Validation("binding-propose reply missing proposal".into()))?;
+        let proposal_val =
+            reply.payload.get("proposal").cloned().ok_or_else(|| {
+                Error::Validation("binding-propose reply missing proposal".into())
+            })?;
         let proposal: BindingProposal = serde_json::from_value(proposal_val)?;
         validate_binding_proposal(&proposal)?;
 
@@ -770,14 +770,9 @@ impl Host {
         let binding = match self.bindings.provider_for(consumer, capability) {
             Some(b) => b.clone(),
             None => {
-                let msg = format!(
-                    "no binding for consumer `{consumer}` capability `{capability}`"
-                );
-                self.audit.record(
-                    AuditKind::InvokeFailed,
-                    Some(consumer.into()),
-                    msg.clone(),
-                );
+                let msg = format!("no binding for consumer `{consumer}` capability `{capability}`");
+                self.audit
+                    .record(AuditKind::InvokeFailed, Some(consumer.into()), msg.clone());
                 return Err(Error::Binding(msg));
             }
         };
@@ -788,11 +783,8 @@ impl Host {
                 Some(p) => p,
                 None => {
                     let msg = format!("provider `{provider_name}` not found");
-                    self.audit.record(
-                        AuditKind::InvokeFailed,
-                        Some(consumer.into()),
-                        msg.clone(),
-                    );
+                    self.audit
+                        .record(AuditKind::InvokeFailed, Some(consumer.into()), msg.clone());
                     return Err(Error::NotFound(provider_name));
                 }
             };
@@ -862,8 +854,7 @@ impl Host {
                     cell_ref.name, manifest.metadata.name
                 )));
             }
-            self.cell_dirs
-                .insert(cell_ref.name.clone(), cell_dir);
+            self.cell_dirs.insert(cell_ref.name.clone(), cell_dir);
             let instance = format!("{}@{}", cell_ref.name, manifest.metadata.version);
             if self.registry.by_name(&cell_ref.name).is_none() {
                 self.register_cell(instance, manifest)?;
@@ -1003,7 +994,8 @@ mod tests {
     #[test]
     fn invoke_via_binding() {
         let mut host = Host::new();
-        host.register_cell("1", cell("web", &[], &["echo"])).unwrap();
+        host.register_cell("1", cell("web", &[], &["echo"]))
+            .unwrap();
         host.register_cell("2", cell("echo-cell", &["echo"], &[]))
             .unwrap();
         host.activate_cell("echo-cell").unwrap();
@@ -1034,7 +1026,8 @@ spec:
     #[test]
     fn unload_clears_executor_and_bindings() {
         let mut host = Host::new();
-        host.register_cell("1", cell("web", &[], &["echo"])).unwrap();
+        host.register_cell("1", cell("web", &[], &["echo"]))
+            .unwrap();
         host.register_cell("2", cell("echo-cell", &["echo"], &[]))
             .unwrap();
         host.activate_cell("echo-cell").unwrap();
@@ -1075,7 +1068,8 @@ spec:
 
         let mut host = Host::new();
         host.set_persist(&state_path, true);
-        host.register_cell("1", cell("web", &[], &["echo"])).unwrap();
+        host.register_cell("1", cell("web", &[], &["echo"]))
+            .unwrap();
         host.activate_cell("web").unwrap();
         host.load_cell_dir(&cell_dir, false).unwrap();
         let proposal: BindingProposal = serde_yaml::from_str(
@@ -1098,15 +1092,14 @@ spec:
 
         let saved = crate::state::load_host_state(&state_path).unwrap();
         let mut host2 = Host::new();
-        host2.register_cell("1", cell("web", &[], &["echo"])).unwrap();
+        host2
+            .register_cell("1", cell("web", &[], &["echo"]))
+            .unwrap();
         host2.activate_cell("web").unwrap();
         let loaded = host2.restore_state(&saved).unwrap();
         assert!(loaded >= 1);
         assert!(host2.registry().by_name("echo-cell").is_some());
-        assert!(host2
-            .bindings()
-            .provider_for("web", "echo")
-            .is_some());
+        assert!(host2.bindings().provider_for("web", "echo").is_some());
 
         let _ = std::fs::remove_dir_all(&tmp);
     }
@@ -1136,11 +1129,7 @@ spec:
         host2.grant_many(vec!["local-cli".into()], vec![], vec![]);
         host2.restore_state(&exported).unwrap();
 
-        assert!(host2
-            .policy
-            .granted_process
-            .iter()
-            .any(|g| g == "bin/tool"));
+        assert!(host2.policy.granted_process.iter().any(|g| g == "bin/tool"));
         assert!(host2
             .policy
             .granted_process

@@ -123,14 +123,14 @@ pub fn read_message(stdin: &mut impl BufRead) -> io::Result<Option<JsonRpcReques
     })?;
     let mut buf = vec![0u8; len];
     stdin.read_exact(&mut buf)?;
-    let req: JsonRpcRequest = serde_json::from_slice(&buf)
-        .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
+    let req: JsonRpcRequest =
+        serde_json::from_slice(&buf).map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
     Ok(Some(req))
 }
 
 pub fn write_message(stdout: &mut impl Write, msg: &JsonRpcResponse) -> io::Result<()> {
-    let body = serde_json::to_vec(msg)
-        .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
+    let body =
+        serde_json::to_vec(msg).map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
     write!(stdout, "Content-Length: {}\r\n\r\n", body.len())?;
     stdout.write_all(&body)?;
     stdout.flush()?;

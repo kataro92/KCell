@@ -2,9 +2,7 @@
 
 use crate::binding::BindingSet;
 use crate::discover::discover_providers;
-use crate::manifest::{
-    BindingProposal, ProposedBinding,
-};
+use crate::manifest::{BindingProposal, ProposedBinding};
 use crate::manifest::{ProposalMetadata, ProposalSpec};
 use crate::registry::LocalRegistry;
 
@@ -46,9 +44,7 @@ pub fn propose_auto_bindings(
             providers.sort_by(|a, b| {
                 let a_match = (a.capability_version == req.version) as u8;
                 let b_match = (b.capability_version == req.version) as u8;
-                b_match
-                    .cmp(&a_match)
-                    .then_with(|| a.cell.cmp(&b.cell))
+                b_match.cmp(&a_match).then_with(|| a.cell.cmp(&b.cell))
             });
             if let Some(p) = providers.first() {
                 proposed.push(ProposedBinding {
@@ -134,7 +130,8 @@ mod tests {
     fn fills_missing_require() {
         let mut host = Host::new();
         host.register_cell("1", cell("web", &[], &["llm"])).unwrap();
-        host.register_cell("2", cell("brain", &["llm"], &[])).unwrap();
+        host.register_cell("2", cell("brain", &["llm"], &[]))
+            .unwrap();
         host.activate_cell("web").unwrap();
         host.activate_cell("brain").unwrap();
         let proposal = propose_auto_bindings(host.registry(), host.bindings(), false);

@@ -57,10 +57,7 @@ impl SubprocessExecutor {
             .get(cell_name)
             .ok_or_else(|| Error::NotFound(format!("no subprocess for cell `{cell_name}`")))?;
 
-        let timeout = request
-            .timeout_ms
-            .unwrap_or(spec.timeout_ms)
-            .max(1);
+        let timeout = request.timeout_ms.unwrap_or(spec.timeout_ms).max(1);
 
         let mut cmd = Command::new(&spec.program);
         cmd.args(&spec.args)

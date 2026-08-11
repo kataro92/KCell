@@ -42,7 +42,9 @@ fn default_true() -> bool {
     true
 }
 
-pub fn load_binding_proposal_from_path(path: impl AsRef<std::path::Path>) -> Result<BindingProposal> {
+pub fn load_binding_proposal_from_path(
+    path: impl AsRef<std::path::Path>,
+) -> Result<BindingProposal> {
     let text = std::fs::read_to_string(path)?;
     let p: BindingProposal = serde_yaml::from_str(&text)?;
     validate_binding_proposal(&p)?;

@@ -3,7 +3,7 @@
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 use std::thread;
-use std::time::{Duration, Instant};
+use std::time::Duration;
 
 use crate::control::{call_unix, ControlRequest};
 use crate::error::Result;
@@ -194,10 +194,7 @@ fn spawn_notify_watch_thread(socket: PathBuf, config: WatchConfig) {
 
         for root in &config.roots {
             if let Err(e) = watcher.watch(root, RecursiveMode::Recursive) {
-                eprintln!(
-                    "kcell watch: cannot watch {}: {e}",
-                    root.display()
-                );
+                eprintln!("kcell watch: cannot watch {}: {e}", root.display());
             }
         }
 

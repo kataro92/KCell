@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Blocks push when fmt/clippy/tests fail.
+set -euo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+exec "$ROOT/scripts/check.sh"
