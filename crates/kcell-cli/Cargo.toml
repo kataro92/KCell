@@ -1,5 +1,5 @@
 [package]
-name = "kcell"
+name = "kcell-cli"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

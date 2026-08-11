@@ -57,6 +57,8 @@ docs/       # Guides
 
 Before pushing code: `scripts/check.sh` (or install `scripts/install-git-hooks.sh`).
 
+Install CLI from crates.io: `cargo install kcell-cli` (binary name: `kcell`).
+
 Wiki pages (source in [`wiki/`](wiki/)): publish with `scripts/publish-wiki.sh` after the GitHub Wiki tab has its first page.
 
 ## License

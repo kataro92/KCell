@@ -1087,16 +1087,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "kcell"
-version = "0.0.1"
-dependencies = [
- "clap",
- "kcell_core",
- "serde_json",
- "serde_yaml",
-]
-
-[[package]]
 name = "kcell-a2a"
 version = "0.0.1"
 dependencies = [
@@ -1114,6 +1104,16 @@ dependencies = [
  "kcell_core",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "kcell-cli"
+version = "0.0.1"
+dependencies = [
+ "clap",
+ "kcell_core",
+ "serde_json",
+ "serde_yaml",
 ]
 
 [[package]]
