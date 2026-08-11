@@ -4,7 +4,7 @@ Optional bridge: Agent Card + JSON-RPC ↔ `kcell serve`. Not part of `kcell_cor
 
 ```bash
 cargo run -p kcell-cli -- serve examples/echo-aiman/ai-man.yaml --root .
-cargo run -p kcell-cli-a2a -- \
+cargo run -p kcell-a2a -- \
   --socket .kcell/kcell.sock \
   --consumer caller-cell \
   --capability echo \
