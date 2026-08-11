@@ -1,0 +1,17 @@
+apiVersion: kcell.dev/v1
+kind: Cell
+metadata:
+  name: compat-min-cell
+  version: 0.1.0
+spec:
+  runtime:
+    kind: inprocess
+    entrypoint: main
+  provides:
+    - name: compat-echo
+      version: "1"
+  requires: []
+  communication:
+    active: false
+    passive: true
+  permissions: {}

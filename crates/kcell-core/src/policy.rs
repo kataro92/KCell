@@ -12,6 +12,7 @@ pub struct PolicyGate {
     pub granted_process: Vec<String>,
     pub granted_secrets: Vec<String>,
     pub granted_peers: Vec<String>,
+    pub granted_filesystem: Vec<String>,
 }
 
 impl Default for PolicyGate {
@@ -22,6 +23,7 @@ impl Default for PolicyGate {
             granted_process: Vec::new(),
             granted_secrets: Vec::new(),
             granted_peers: Vec::new(),
+            granted_filesystem: Vec::new(),
         }
     }
 }
@@ -63,9 +65,16 @@ impl PolicyGate {
                 denied.push(format!("peer:{peer}"));
             }
         }
-        // Filesystem grants must be reviewed; deny any path unless defaultAllow.
         for fs in &cell.spec.permissions.filesystem {
-            denied.push(format!("filesystem:{}:{:?}", fs.path, fs.mode));
+            let key = format!("{}:{:?}", fs.path, fs.mode).to_ascii_lowercase();
+            let granted = self.granted_filesystem.iter().any(|g| {
+                g == "*"
+                    || g.eq_ignore_ascii_case(&format!("{}:{:?}", fs.path, fs.mode))
+                    || g == &fs.path
+            });
+            if !granted {
+                denied.push(format!("filesystem:{key}"));
+            }
         }
 
         if denied.is_empty() {
@@ -83,10 +92,48 @@ impl PolicyGate {
     }
 
     pub fn grant_network(&mut self, target: impl Into<String>) {
-        self.granted_network.push(target.into());
+        push_unique(&mut self.granted_network, target.into());
     }
 
     pub fn grant_process(&mut self, target: impl Into<String>) {
-        self.granted_process.push(target.into());
+        push_unique(&mut self.granted_process, target.into());
+    }
+
+    pub fn grant_secret(&mut self, target: impl Into<String>) {
+        push_unique(&mut self.granted_secrets, target.into());
+    }
+
+    pub fn grant_peer(&mut self, target: impl Into<String>) {
+        push_unique(&mut self.granted_peers, target.into());
+    }
+
+    pub fn grant_filesystem(&mut self, target: impl Into<String>) {
+        push_unique(&mut self.granted_filesystem, target.into());
+    }
+
+    pub fn revoke_network(&mut self, target: &str) {
+        self.granted_network.retain(|g| g != target);
+    }
+
+    pub fn revoke_process(&mut self, target: &str) {
+        self.granted_process.retain(|g| g != target);
+    }
+
+    pub fn revoke_secret(&mut self, target: &str) {
+        self.granted_secrets.retain(|g| g != target);
+    }
+
+    pub fn revoke_peer(&mut self, target: &str) {
+        self.granted_peers.retain(|g| g != target);
+    }
+
+    pub fn revoke_filesystem(&mut self, target: &str) {
+        self.granted_filesystem.retain(|g| g != target);
+    }
+}
+
+fn push_unique(list: &mut Vec<String>, value: String) {
+    if !list.iter().any(|v| v == &value) {
+        list.push(value);
     }
 }

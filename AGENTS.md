@@ -1,59 +1,58 @@
 # Instructions for AI coding agents
 
-KCell is the **ecosystem kernel**: an extremely small, fast Host plus stable contracts. Child repos (Cells, AI-men, adapters) extend it — they must not need to fork core.
+KCell is a small Host plus stable contracts. Product Cells and adapters live outside core — do not fork core to ship a feature.
 
-Normative NFRs: [`docs/nfr.md`](docs/nfr.md).
+- Rules: [`docs/nfr.md`](docs/nfr.md)
+- Compatibility: [`docs/compatibility.md`](docs/compatibility.md)
 
-## Mental model
+## Words
 
 | Term | Meaning |
 |------|---------|
-| Stem Cell | Factory / runtime contract used to specialize a Cell |
-| Specialized Cell | Immutable package (version + digest); change ⇒ new revision |
-| Active / Passive | Outbound vs inbound communication *capabilities* on the same Cell |
-| AI-man | Composition of Cells + bindings + policy |
-| Host | Authority for lifecycle, admission, sandbox, and binding apply |
+| Stem Cell | Template used to create a Cell |
+| Specialized Cell | Finished Cell package (version + digest); change ⇒ new revision |
+| Active / Passive | Call out / be called |
+| AI-man | Cells + bindings + policy |
+| Host | Loads Cells, checks permissions, applies bindings |
 
-Auto-config Cells may **propose** bindings; only the Host validates and applies them.
+Auto-config may **propose** bindings; only the Host applies them.
 
-## Where to put code
+## Where code goes
 
-- **Core** (`crates/kcell-core/`): only if **every** Cell / child repo needs it
-- **CLI** (`crates/kcell-cli/`): thin operator; no product orchestration
-- **Adapters** (`adapters/` or adapter child repos): AG-UI, A2A, MCP, transports
-- **Cells** (`cells/` or Cell child repos): brains, UIs, tools, auto-config
-- **Do not** expand core to satisfy one Cell or one product repo
+- **Core** — only if every Cell needs it
+- **CLI** — thin operator
+- **Adapters** — MCP / AG-UI / A2A / transports
+- **Cells / child repos** — product logic
 
-## Non-functional bar (must not violate)
+## Must keep
 
-1. **Compact** — fewer types/APIs/deps; delete unused abstractions in the same PR
-2. **Fast** — no default brokers/DB/telemetry; measure hot paths; honor `benches/BUDGET.md`
-3. **Simple** — shallow tree; one concept one place; schemas win over prose
-4. **Extensible** — new Cell/protocol/executor without core edits
-5. **Kernel** — keep versioned contracts stable for downstream repos
+1. Compact — fewer APIs/deps; delete dead code in the same PR  
+2. Fast — no default brokers/DB/telemetry; honor `benches/BUDGET.md`  
+3. Simple — one concept, one place; schemas win over prose  
+4. Extensible — new Cell/protocol without rewriting core  
+5. Compatible — Host major N runs Cells valid on N−1 (`docs/compatibility.md`)
 
-## Workflow for a new Cell
+## New Cell
 
-1. Scaffold from Stem Cell template / CLI (`new`)
-2. Declare capabilities and ports in `cell.yaml`
-3. Implement behind those contracts (preferably in a child repo)
-4. `validate` → `test` → `build` → `inspect`
-5. Request **minimum** permissions; treat tool descriptions as untrusted
+1. `kcell specialize` or `kcell new`  
+2. Fill `cell.yaml`  
+3. Implement in a Cell/child repo  
+4. `validate` → `build` → `inspect`  
+5. Minimum permissions  
 
-Use non-interactive CLI with stable exit codes. Prefer `--json` and schema over prose.
+Prefer `--json` and schemas. Exit `0` = success.
 
 ## Hard rules
 
-- Package artifacts are immutable; secrets stay out of packages
-- Deny-by-default: no ambient network/fs/process without grant
-- Keep hot paths allocation-bounded; add benches when touching core hot path
-- No new public API or dependency in core without a universal need + NFR check
-- Do not invent a replacement for AG-UI / A2A / MCP at the boundary
-- Reject changes that force child repos to patch `kcell_core` to extend behavior
+- No secrets in packages; packages are immutable  
+- Deny-by-default permissions  
+- No new core API/dep without NFR review  
+- Do not replace AG-UI / A2A / MCP at the boundary  
+- Do not force child repos to patch `kcell_core`  
+- Contract changes follow [`docs/compatibility.md`](docs/compatibility.md); keep `tests/fixtures/compat/` green  
 
 ## Docs
 
-- NFRs: `docs/nfr.md`
-- Cell authoring: `docs/cell-authoring-for-agents.md`
-- Schemas: `schemas/`
-- Budgets: `benches/BUDGET.md`
+[`docs/README.md`](docs/README.md) · `schemas/` · `tests/fixtures/compat/` · `benches/BUDGET.md`
+
+Optional features: `wasi`, `notify` (off by default).

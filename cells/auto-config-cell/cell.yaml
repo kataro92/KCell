@@ -1,0 +1,29 @@
+apiVersion: kcell.dev/v1
+kind: Cell
+metadata:
+  name: auto-config-cell
+  version: 0.1.0
+  description: Proposes BindingProposal from a Host snapshot; Host alone applies
+spec:
+  runtime:
+    kind: subprocess
+    entrypoint: kcell
+    artifact: worker-autoconfig
+  provides:
+    - name: binding-propose
+      version: "1"
+      contract: kcell.binding.propose.v1
+  requires: []
+  communication:
+    active: false
+    passive: true
+  ports:
+    - name: binding-propose
+      direction: in
+      message: kcell.binding.propose.request.v1
+  permissions: {}
+  resources:
+    memoryMb: 32
+    timeoutMs: 5000
+    concurrency: 1
+  restartPolicy: on-failure

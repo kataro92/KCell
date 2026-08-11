@@ -1,0 +1,21 @@
+apiVersion: kcell.dev/v1
+kind: Cell
+metadata:
+  name: caller-sub-cell
+  version: 0.1.0
+  description: Consumer of subprocess echo
+spec:
+  runtime:
+    kind: inprocess
+    entrypoint: main
+  provides: []
+  requires:
+    - name: echo-sub
+      version: "1"
+  communication:
+    active: true
+    passive: false
+  permissions: {}
+  resources:
+    timeoutMs: 3000
+  restartPolicy: on-failure

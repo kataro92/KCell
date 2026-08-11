@@ -1,0 +1,19 @@
+apiVersion: kcell.dev/v1
+kind: AIMan
+metadata:
+  name: echo-autoconfig
+  description: Caller + echo with no static bindings — auto-config Cell proposes them
+spec:
+  cells:
+    - name: echo-cell
+      path: cells/echo-cell
+    - name: caller-cell
+      path: cells/caller-cell
+      dependsOn:
+        - echo-cell
+    - name: auto-config-cell
+      path: cells/auto-config-cell
+  bindings: []
+  policy:
+    defaultAllow: false
+    failureStrategy: continue-optional

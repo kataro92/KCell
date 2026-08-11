@@ -1,0 +1,24 @@
+apiVersion: kcell.dev/v1
+kind: Cell
+metadata:
+  name: stem-cell
+  version: 0.1.0
+  description: Stem template — specialize into a Cell package via `kcell specialize`
+spec:
+  runtime:
+    kind: inprocess
+    entrypoint: main
+  provides:
+    - name: stem
+      version: "1"
+  requires: []
+  communication:
+    active: false
+    passive: true
+  ports: []
+  permissions: {}
+  resources:
+    memoryMb: 64
+    timeoutMs: 5000
+    concurrency: 4
+  restartPolicy: on-failure

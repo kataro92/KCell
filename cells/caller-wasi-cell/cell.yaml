@@ -1,0 +1,21 @@
+apiVersion: kcell.dev/v1
+kind: Cell
+metadata:
+  name: caller-wasi-cell
+  version: 0.1.0
+  description: Consumer of WASI echo
+spec:
+  runtime:
+    kind: inprocess
+    entrypoint: main
+  provides: []
+  requires:
+    - name: echo-wasi
+      version: "1"
+  communication:
+    active: true
+    passive: false
+  permissions: {}
+  resources:
+    timeoutMs: 5000
+  restartPolicy: on-failure

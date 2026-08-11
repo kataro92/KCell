@@ -109,4 +109,13 @@ impl LocalRegistry {
         self.by_name.remove(&rec.manifest.metadata.name);
         Ok(rec)
     }
+
+    pub fn remove_by_name(&mut self, name: &str) -> Result<CellRecord> {
+        let id = self
+            .by_name
+            .get(name)
+            .cloned()
+            .ok_or_else(|| Error::NotFound(name.into()))?;
+        self.remove(&id)
+    }
 }

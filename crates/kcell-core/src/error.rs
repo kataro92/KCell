@@ -27,4 +27,7 @@ pub enum Error {
 
     #[error("not found: {0}")]
     NotFound(String),
+
+    #[error("timeout: {0}")]
+    Timeout(String),
 }

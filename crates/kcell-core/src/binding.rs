@@ -27,9 +27,36 @@ impl BindingSet {
     pub fn bindings(&self) -> &[ActiveBinding] {
         &self.bindings
     }
+
+    pub fn provider_for(&self, consumer: &str, capability: &str) -> Option<&ActiveBinding> {
+        self.bindings
+            .iter()
+            .find(|b| b.consumer == consumer && b.capability == capability)
+    }
+
+    /// Drop bindings where `name` is consumer or provider. Bumps generation if anything removed.
+    /// Returns `true` if the set changed.
+    pub fn retain_without_cell(&mut self, name: &str) -> bool {
+        let before = self.bindings.len();
+        self.bindings
+            .retain(|b| b.consumer != name && b.provider != name);
+        if self.bindings.len() != before {
+            self.generation = self.generation.saturating_add(1).max(1);
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Replace bindings wholesale (used by durable state restore helpers).
+    pub fn replace(&mut self, generation: u64, bindings: Vec<ActiveBinding>) {
+        self.generation = generation;
+        self.bindings = bindings;
+    }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub enum BindingApplyResult {
     Applied { generation: u64 },
     Rejected { reason: String },

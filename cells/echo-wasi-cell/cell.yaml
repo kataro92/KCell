@@ -1,0 +1,29 @@
+apiVersion: kcell.dev/v1
+kind: Cell
+metadata:
+  name: echo-wasi-cell
+  version: 0.1.0
+  description: WASI echo via JSON-line stdin/stdout (requires Host --features wasi)
+spec:
+  runtime:
+    kind: wasi
+    entrypoint: _start
+    artifact: echo.wasm
+  provides:
+    - name: echo-wasi
+      version: "1"
+      contract: kcell.echo.v1
+  requires: []
+  communication:
+    active: false
+    passive: true
+  ports:
+    - name: echo-wasi
+      direction: in
+      message: kcell.echo.request.v1
+  permissions: {}
+  resources:
+    memoryMb: 32
+    timeoutMs: 5000
+    concurrency: 1
+  restartPolicy: on-failure

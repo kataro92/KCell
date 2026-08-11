@@ -283,4 +283,13 @@ spec:
         validate_cell(&cell).unwrap();
         assert_eq!(cell.metadata.name, "echo-cell");
     }
+
+    #[test]
+    fn compat_fixture_v1_min_cell_loads() {
+        let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../../tests/fixtures/compat/cell.v1.min.yaml");
+        let cell = load_cell_from_path(&path).expect("compat v1 min cell must load");
+        assert_eq!(cell.api_version, "kcell.dev/v1");
+        assert_eq!(cell.metadata.name, "compat-min-cell");
+    }
 }

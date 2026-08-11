@@ -1,0 +1,18 @@
+[package]
+name = "kcell-a2a"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "KCell A2A adapter — Agent Card + JSON-RPC message/send over Host control socket"
+readme = "README.md"
+
+[[bin]]
+name = "kcell-a2a"
+path = "src/main.rs"
+
+[dependencies]
+kcell_core = { workspace = true }
+clap = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }

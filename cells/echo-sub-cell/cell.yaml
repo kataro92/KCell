@@ -1,0 +1,29 @@
+apiVersion: kcell.dev/v1
+kind: Cell
+metadata:
+  name: echo-sub-cell
+  version: 0.1.0
+  description: Subprocess echo via `kcell worker` stdio protocol
+spec:
+  runtime:
+    kind: subprocess
+    entrypoint: kcell
+    artifact: worker
+  provides:
+    - name: echo-sub
+      version: "1"
+      contract: kcell.echo.v1
+  requires: []
+  communication:
+    active: false
+    passive: true
+  ports:
+    - name: echo-sub
+      direction: in
+      message: kcell.echo.request.v1
+  permissions: {}
+  resources:
+    memoryMb: 32
+    timeoutMs: 3000
+    concurrency: 2
+  restartPolicy: on-failure

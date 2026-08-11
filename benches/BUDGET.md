@@ -1,6 +1,6 @@
-# Performance budgets (MVP)
+# Performance budgets
 
-Tied to [NFR-2](../docs/nfr.md#nfr-2--extreme-performance). Baselines use `cargo bench` / release timing as executors land.
+Tied to [NFR-2](../docs/nfr.md#nfr-2--extreme-performance).
 
 | Metric | Budget (local M-series / mid laptop) |
 |--------|--------------------------------------|
@@ -19,5 +19,13 @@ Tied to [NFR-2](../docs/nfr.md#nfr-2--extreme-performance). Baselines use `cargo
 
 ## Current core dependencies
 
-- `serde` / `serde_yaml` / `serde_json` — manifests
+- `serde` / `serde_yaml` / `serde_json` — manifests / envelope
 - `thiserror` — errors
+- `sha2` — Cell package content digest (`kcell build`)
+
+### Optional (Cargo features)
+
+| Feature | Deps | Justification |
+|---------|------|----------------|
+| `wasi` | `wasmtime` + `wasmtime-wasi` (v34) | NFR-4.3 execution backend; **off by default** so idle Host RSS / cold start stay lean (NFR-1.5, NFR-2.2) |
+| `notify` | `notify` (v7) | OS file events for `serve --watch --watch-notify`; **off by default** — poll watcher stays zero-dep (NFR-1.5, NFR-2.2) |

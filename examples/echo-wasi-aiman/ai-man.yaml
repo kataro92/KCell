@@ -1,0 +1,17 @@
+apiVersion: kcell.dev/v1
+kind: AIMan
+metadata:
+  name: echo-wasi-aiman
+  version: 0.1.0
+  description: Caller (in-process) + WASI echo provider
+spec:
+  cells:
+    - name: caller-wasi-cell
+      path: cells/caller-wasi-cell
+    - name: echo-wasi-cell
+      path: cells/echo-wasi-cell
+  bindings:
+    - consumer: caller-wasi-cell
+      capability: echo-wasi
+      provider: echo-wasi-cell
+      required: true

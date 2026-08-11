@@ -1,0 +1,13 @@
+apiVersion: kcell.dev/v1
+kind: BindingProposal
+metadata:
+  proposer: hot-load-demo
+  generation: 2
+  reason: refresh bindings after hot-load
+spec:
+  replaceGeneration: 1
+  bindings:
+    - consumer: caller-cell
+      provider: echo-cell
+      capability: echo
+      required: true

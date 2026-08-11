@@ -1,8 +1,6 @@
 # Non-functional requirements (NFR)
 
-KCell is the **kernel** of a multi-repo ecosystem. Downstream Cell / AI-man / adapter repos depend on this core; they must not need to fork it to ship product features.
-
-These NFRs are **hard constraints**, not preferences.
+Hard rules so the Host stays small and usable as a shared kernel. Details for upgrades: [compatibility.md](compatibility.md).
 
 ## NFR-1 — Extreme code compactness
 
@@ -67,6 +65,20 @@ KCell is designed as the **shared core** that other repos consume:
 | NFR-5.4 | Documentation for agents (`AGENTS.md`, authoring guide) MUST stay accurate so child repos can be authored by AI agents against this kernel. |
 | NFR-5.5 | Features that only serve one child product MUST land in that child repo, never as core special cases. |
 
+## NFR-6 — Backward compatibility
+
+Downstream Cells authored against Host major **N−1** MUST keep running on Host major **N**. Full rules: [`compatibility.md`](compatibility.md).
+
+| ID | Requirement |
+|----|-------------|
+| NFR-6.1 | Host major N MUST admit/activate/bind/invoke Cells whose manifests and envelopes were valid on Host major N−1 (same operator grants). |
+| NFR-6.2 | Within a contract id (`kcell.dev/v1`, `kcell.envelope.v1`, …), changes MUST be additive only (optional fields + defaults; no rename/remove/require-new or semantic change). |
+| NFR-6.3 | Breaking wire/schema changes MUST introduce a new contract id and dual-support the prior id for the prior-major window. |
+| NFR-6.4 | Existing `schemas/*.vN.json` MUST NOT gain new `required` fields or remove/rename properties; breaking shape ⇒ new schema file. |
+| NFR-6.5 | Compat fixtures under `tests/fixtures/compat/` MUST continue to load/validate on every Host change in this repository. |
+
+**Test:** A minimal `apiVersion: kcell.dev/v1` Cell from the prior major still validates and runs on the current Host without rewriting the Cell package.
+
 ## Acceptance summary
 
 A change is **rejected** if it:
@@ -75,4 +87,5 @@ A change is **rejected** if it:
 - adds default runtime weight (network/DB/telemetry) without opt-in,
 - complicates layout without removing an equivalent concept elsewhere,
 - forces child repos to patch core to extend behavior,
-- or breaks schema/CLI contracts without a versioned migration.
+- breaks schema/CLI contracts without a versioned migration,
+- or drops prior-major contract support without dual-read for the required window ([`compatibility.md`](compatibility.md)).

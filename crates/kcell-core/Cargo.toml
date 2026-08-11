@@ -7,10 +7,21 @@ repository.workspace = true
 description = "KCell host core: manifests, lifecycle, registry, binding, policy"
 readme = "../../README.md"
 
+[features]
+default = []
+# Opt-in WASI runtime (wasmtime). Keep off by default — see benches/BUDGET.md / NFR-1.5.
+wasi = ["dep:wasmtime", "dep:wasmtime-wasi"]
+# Opt-in OS file events for `serve --watch` (notify crate). Default remains poll.
+notify = ["dep:notify"]
+
 [dependencies]
 serde = { workspace = true }
 serde_json = { workspace = true }
 serde_yaml = { workspace = true }
 thiserror = { workspace = true }
+sha2 = { workspace = true }
+wasmtime = { version = "34", optional = true }
+wasmtime-wasi = { version = "34", optional = true }
+notify = { version = "7", optional = true }
 
 [dev-dependencies]

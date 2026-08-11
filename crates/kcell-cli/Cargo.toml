@@ -11,6 +11,11 @@ readme = "../../README.md"
 name = "kcell"
 path = "src/main.rs"
 
+[features]
+default = []
+wasi = ["kcell_core/wasi"]
+notify = ["kcell_core/notify"]
+
 [dependencies]
 kcell_core = { workspace = true }
 clap = { workspace = true }

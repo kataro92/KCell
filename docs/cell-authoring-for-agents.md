@@ -1,55 +1,47 @@
-# Cell authoring for AI agents
+# Write a Cell
 
-Machine-readable source of truth: [`schemas/`](../schemas/).
+Contracts: [`schemas/`](../schemas/).
 
-## Canonical layout
+## Layout
 
 ```text
 my-cell/
-  cell.yaml     # required
-  README.md     # optional short description
-  src/          # optional implementation (runtime-specific)
+  cell.yaml    # required
+  README.md    # optional
+  src/         # optional code
 ```
-
-AI-man composition:
 
 ```text
 my-aiman/
-  ai-man.yaml   # lists cells by relative path from --root
+  ai-man.yaml  # lists Cells (paths relative to --root)
 ```
 
-## Commands (non-interactive)
+## Commands
 
 ```bash
 kcell new my-cell
+kcell specialize my-cell --from templates/stem-cell --provide my-cell:1
 kcell validate path/to/cell.yaml --json
-kcell inspect path/to/cell.yaml
-kcell validate path/to/ai-man.yaml --json
-kcell run path/to/ai-man.yaml --root . --json
+kcell build path/to/cell-dir --json
+kcell run path/to/ai-man.yaml --root . --invoke consumer --capability some-cap --json
 ```
 
-Exit code `0` = success; non-zero = failure. Prefer `--json` in automation.
+Exit `0` = ok. Prefer `--json` in scripts.
+
+Subprocess Cells: one JSON line in, one out. See [stdio protocol](stdio-protocol.md). Demo worker: `kcell worker`.
 
 ## Checklist
 
-1. `apiVersion: kcell.dev/v1` and correct `kind`
-2. `metadata.name` is a dns-label; `version` is semver
-3. At least one of `provides` / `requires`
-4. `communication.active` and/or `passive` enabled
-5. Request **minimum** `permissions` (default deny)
-6. Do not put secrets in the package
-7. Do not change `crates/kcell-core` for a single Cell need
-8. Prefer a **child repo** for product Cells; depend on KCell contracts
-9. Obey [`nfr.md`](nfr.md): compact, fast, simple, extensible kernel
+1. `apiVersion: kcell.dev/v1`, `kind: Cell`
+2. Valid `name` and semver `version`
+3. At least one `provides` or `requires`
+4. `communication` active and/or passive
+5. Ask for only the permissions you need
+6. No secrets in the package
+7. Do not change core for one product Cell — use a child repo
 
-## Anti-patterns
+## Example
 
-- Inventing a custom wire protocol instead of declaring ports/capabilities
-- Granting `*` network/process in manifests “for convenience”
-- Mutating another Cell’s package at runtime
-- Putting AutoConfig apply logic inside a Cell (Host applies proposals)
-- Growing core to ship one product feature instead of a child repo
+[`cells/echo-cell`](../cells/echo-cell) + [`examples/echo-aiman`](../examples/echo-aiman).
 
-## Golden path
-
-See [`cells/echo-cell`](../cells/echo-cell) + [`examples/echo-aiman`](../examples/echo-aiman).
+Auto-config: [`docs/auto-config.md`](auto-config.md).

@@ -3,7 +3,11 @@ resolver = "2"
 members = [
     "crates/kcell-core",
     "crates/kcell-cli",
+    "adapters/kcell-mcp",
+    "adapters/kcell-agui",
+    "adapters/kcell-a2a",
 ]
+default-members = ["crates/kcell-cli"]
 
 [workspace.package]
 version = "0.1.0"
@@ -18,3 +22,4 @@ serde_json = "1"
 serde_yaml = "0.9"
 thiserror = "2"
 clap = { version = "4", features = ["derive"] }
+sha2 = "0.10"

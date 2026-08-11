@@ -1,0 +1,21 @@
+apiVersion: kcell.dev/v1
+kind: AIMan
+metadata:
+  name: echo-sub-demo
+  description: AI-man using subprocess echo Cell
+spec:
+  cells:
+    - name: echo-sub-cell
+      path: cells/echo-sub-cell
+    - name: caller-sub-cell
+      path: cells/caller-sub-cell
+      dependsOn:
+        - echo-sub-cell
+  bindings:
+    - consumer: caller-sub-cell
+      provider: echo-sub-cell
+      capability: echo-sub
+      required: true
+  policy:
+    defaultAllow: false
+    failureStrategy: continue-optional

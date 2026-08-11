@@ -1,0 +1,8 @@
+{
+  "schema": "kcell.host-state.v1",
+  "cellDirs": {},
+  "bindings": {
+    "generation": 0,
+    "items": []
+  }
+}

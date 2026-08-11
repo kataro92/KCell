@@ -1,0 +1,21 @@
+---
+description: Backward compatibility — prior-major Cells must keep running on newer Hosts
+alwaysApply: true
+---
+
+# Compatibility (always)
+
+Normative policy: [`docs/compatibility.md`](docs/compatibility.md). NFRs: [`docs/nfr.md`](docs/nfr.md) NFR-6.
+
+## Before changing contracts or Host public behavior
+
+1. Identify the **surface**: manifest (`kcell.dev/v1`), envelope, control socket, host-state, JSON Schema, or public Rust API.
+2. Prefer **additive** changes in the same contract id (optional fields + defaults). Never rename/remove/require-new or change field semantics in place.
+3. If breaking: ship a **new** contract id (`…v2`) and keep **dual-support** for the prior id for at least one Host major (Host N reads contracts from N−1).
+4. Do **not** edit `schemas/*.v1.json` in a breaking way; add `*.v2.json` instead. Optional properties only on v1.
+5. Add or keep a test against [`tests/fixtures/compat/`](tests/fixtures/compat/) so minimal v1 Cell / old host-state still load.
+6. Reject the change if it would force child Cell repos on the prior major to patch core or rewrite manifests just to keep running.
+
+## Remember
+
+Host crate SemVer ≠ Cell wire compatibility. Cells speak YAML/JSON contracts; those must stay runnable across Host majors per the policy above.
