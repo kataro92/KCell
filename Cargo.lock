@@ -1088,7 +1088,7 @@ dependencies = [
 
 [[package]]
 name = "kcell"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "clap",
  "kcell_core",
@@ -1098,7 +1098,7 @@ dependencies = [
 
 [[package]]
 name = "kcell-a2a"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "clap",
  "kcell_core",
@@ -1108,7 +1108,7 @@ dependencies = [
 
 [[package]]
 name = "kcell-agui"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "clap",
  "kcell_core",
@@ -1118,7 +1118,7 @@ dependencies = [
 
 [[package]]
 name = "kcell-mcp"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "clap",
  "kcell_core",
@@ -1128,7 +1128,7 @@ dependencies = [
 
 [[package]]
 name = "kcell_core"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "notify",
  "serde",
